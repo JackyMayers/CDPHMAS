@@ -1,175 +1,221 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-    <title>Farmacia</title>
+    <link rel="icon" href="https://i.postimg.cc/MG7qzW4x/emote.png" type="image/x-icon">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de ponto H.M.A.S</title>
     <style>
-        body.light-mode {
-            background-color: white;
-            color: black;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #dcdcdc;
+            color: #333;
+            padding: 20px;
         }
-
-        body.dark-mode {
-            background-color: black;
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        input, textarea, button {
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: calc(100% - 22px);
+        }
+        button {
+            background-color: #007bff;
             color: white;
+            border: none;
+            cursor: pointer;
         }
-
-        #dark-mode-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            white-space: pre-wrap;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: monospace;
         }
     </style>
 </head>
-
-<body class="light-mode">
-    <button id="dark-mode-button" onclick="toggleDarkMode()">Alterar Modo</button>
-
+<body>
     <center>
-        <b>
-           <!-- <a href="https://tairritadotio.github.io/farmacia/"><font color="purple"> Farmacia</font></a>
-            <a href="https://tairritadotio.github.io/ponto2/"><font color="red">Tempo e ajuste</font></a>
-            <a href="https://tairritadotio.github.io/ponto3/"><font color="maroon">Ajuste de ponto</font></a>-->
-            <a href="https://jackymayers.github.io/pontohmas/"><font color="darkorange">Calcular tempo de trabalho</font></a>
-        </b>
+        <b><a href="https://jackymayers.github.io/farmacia/"><font color="purple">Farmacia</font></a></b>
     </center>
+    <div class="container">
+        <h1>Controle de ponto H.M.A.S</h1>
+        <form id="timeForm">
+            <h2>Informações do Funcionário</h2>
+            <input type="text" id="employeeName" placeholder="Nome" />
+            <input type="text" id="employeeId" placeholder="ID" />
+            <input type="text" id="employeeRole" placeholder="Função" />
 
-    <center>
-        <h1>Farmácia</h1>
+            <h2>Entradas do Bot</h2>
+            <textarea id="botEntries" rows="5" placeholder="Cole as entradas do bot aqui, uma por linha (ex: DD/MM/AAAA - x horas x minutos)"></textarea>
+            <button type="button" onclick="processBotEntries()">Processar Entradas do Bot</button>
 
-        <form id="calculadoraForm">
-            <table>
-                <thead>
-                    <tr>
-                        <th><font color="purple">Produto</font></th>
-                        <th><font color="purple">Preço Unitário</font></th>
-                        <th><font color="purple">Quantidade</font></th>
-                        <th><font color="purple">Valor Total</font></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th><font color="DodgerBlue">Analgésico</font></th>
-                        <th><span id="preco-analgesico">$ 200</span> </th>
-                        <th><input type="number" class="quantidade" data-produto="analgesico" min="0" value="0" oninput="atualizarValorTotal()"></th>
-                        <th><span id="total-analgesico">0</span></th>
-                    </tr>
-                    <tr>
-                        <th><font color="DodgerBlue">Bandagem</font></th>
-                        <th><span id="preco-bandagem">$ 500</span> </th>
-                        <th><input type="number" class="quantidade" data-produto="bandagem" min="0" value="0" oninput="atualizarValorTotal()"></th>
-                        <th><span id="total-bandagem">0</span></th>
-                    </tr>
-                    <tr>
-                        <th><font color="DodgerBlue">Gaze</font></th>
-                        <th><span id="preco-gaze">$ 250</span> </th>
-                        <th><input type="number" class="quantidade" data-produto="gaze" min="0" value="0" oninput="atualizarValorTotal()"></th>
-                        <th><span id="total-gaze">0</span></th>
-                    </tr>
-                    <tr>
-                        <th><font color="DodgerBlue">Kit Médico</font></th>
-                        <th><span id="preco-kit-medico">$ 1350</span> </th>
-                        <th><input type="number" class="quantidade" data-produto="kit-medico" min="0" value="0" oninput="atualizarValorTotal()"></th>
-                        <th><span id="total-kit-medico">0</span></th>
-                    </tr>
-                    <tr>
-                        <th><font color="DodgerBlue">Ritmoneury</font></th>
-                        <th><span id="preco-ritmoneury">$ 925</span> </th>
-                        <th><input type="number" class="quantidade" data-produto="ritmoneury" min="0" value="0" oninput="atualizarValorTotal()"></th>
-                        <th><span id="total-ritmoneury">0</span></th>
-                    </tr>
-                    <tr>
-                        <th><font color="DodgerBlue">Sinkalmy</font></th>
-                        <th><span id="preco-sinkalmy">$ 750</span> </th>
-                        <th><input type="number" class="quantidade" data-produto="sinkalmy" min="0" value="0" oninput="atualizarValorTotal()"></th>
-                        <th><span id="total-sinkalmy">0</span></th>
-                    </tr>
-                </tbody>
-            </table>
+            <h2>Ajuste Manual</h2>
+            <textarea id="manualEntries" rows="5" placeholder="Nome: Nome&#10;Passaporte: xxxx&#10;Data: DD/MM/AAAA&#10;Entrada: HH:MM&#10;Saída: HH:MM"></textarea>
+            <button type="button" onclick="processManualEntries()">Adicionar Ajuste Manual</button>
+
+            <h2>Adicionar Horas e Minutos</h2>
+            <input type="number" id="extraHours" placeholder="Horas" />
+            <input type="number" id="extraMinutes" placeholder="Minutos" />
+            <button type="button" onclick="addExtraTime()">Adicionar Tempo</button>
+
+            <h2>Justificativa</h2>
+            <textarea id="justification" rows="3" placeholder="Justifique caso a meta não seja batida"></textarea>
+
+            <button type="button" onclick="updateResult()">Justificar</button>
+            <button type="button" onclick="generateFile()">Gerar Arquivo TXT</button>
         </form>
-<br/>
-        <div id="resultado-produtos">
-            <b>Valor Total de Todos os Produtos:$</b> <span id="total-geral"><b>0</b></span>
-        </div>
-<br/>
-        <div id="resultado-tempo">
-            <label for="hora-doacao">Digite a hora da coleta (formato hh:mm): </label>
-            <input type="text" id="hora-doacao" placeholder="hh:mm" onblur="verificarTempoDoacao()">
-            <p id="tempo-resultado"></p>
-        </div>
 
-        <h1 style="text-align: center;">Valores do atendimento</h1>
-        <table style="margin: 0 auto;">
-            <tr>
-                <th style="font-weight: bold; text-align: center;"><font color="purple">Tratamento</font> - <font color="DodgerBlue">$300</font></th>
-            </tr>
-            <!--<tr>
-                <th style="font-weight: bold; text-align: center;"><font color="purple">Policial fardado</font> - <font color="red">$ 250</font></th>
-            </tr>-->
-            <tr>
-                <th style="font-weight: bold; text-align: center;"><font color="purple">Doadores de sangue</font> - <font color="DodgerBlue">Grátis dentro de 2 horas após a doação</font></th>
-            </tr>
-            <tr>
-                <th style="font-weight: bold; text-align: center;"><font color="purple">Psicotecnicos caça</font> - <font color="DodgerBlue">$ 7000</font></th>
-            </tr>
-            <tr>
-                <th style="font-weight: bold; text-align: center;"><font color="purple">Psicotecnicos  policia</font> - <font color="DodgerBlue">$ 5000</font></th>
-            </tr>
-        </table>
+        <div class="result" id="resultText">Nenhum resultado disponível.</div>
+    </div>
 
-        <script>
-            function atualizarValorTotal() {
-                var quantidades = document.getElementsByClassName("quantidade");
-                var precos = [200, 500, 250, 1350, 925, 750];
-                var valorTotalGeral = 0;
+    <script>
+        let totalHoursWorked = 0;
+        let totalMinutesWorked = 0;
+        let daysTracked = new Set();
+        let entriesList = [];
 
-                for (var i = 0; i < quantidades.length; i++) {
-                    var quantidade = parseFloat(quantidades[i].value);
-                    var totalProduto = quantidade * precos[i];
-                    var produto = quantidades[i].getAttribute("data-produto");
-                    document.getElementById("total-" + produto).textContent = totalProduto;
-                    valorTotalGeral += totalProduto;
+        function parseTime(timeString) {
+            let hours = 0;
+            let minutes = 0;
+            const hourMatch = timeString.match(/(\d+)\s*hora/);
+            if (hourMatch) {
+                hours = parseInt(hourMatch[1], 10);
+            }
+            const minuteMatch = timeString.match(/(\d+)\s*minuto/);
+            if (minuteMatch) {
+                minutes = parseInt(minuteMatch[1], 10);
+            }
+            return { hours, minutes };
+        }
+
+        function processBotEntries() {
+            let botEntries = document.getElementById('botEntries').value.trim().split('\n');
+            botEntries.forEach(entry => {
+                let [date, time] = entry.split(' - ');
+                let timeData = parseTime(time.trim());
+                if (timeData.hours > 0 || timeData.minutes > 0) {
+                    let formattedDate = formatDate(date);
+                    entriesList.push(`${formattedDate} - ${timeData.hours} horas e ${timeData.minutes} minutos`);
+                    totalHoursWorked += timeData.hours;
+                    totalMinutesWorked += timeData.minutes;
+                    adjustMinutes();
+                    daysTracked.add(formattedDate);
                 }
+            });
+            updateResult();
+        }
 
-                document.getElementById("total-geral").innerHTML = "<b>" + valorTotalGeral + "</b>";
+        function processManualEntries() {
+            let lines = document.getElementById('manualEntries').value.trim().split('\n');
+            let date = '', entryTime = '', exitTime = '';
+            lines.forEach(line => {
+                if (line.startsWith('Data:')) date = line.replace('Data:', '').trim();
+                else if (line.startsWith('Entrada:')) entryTime = line.replace('Entrada:', '').trim();
+                else if (line.startsWith('Saída:')) exitTime = line.replace('Saída:', '').trim();
+            });
+
+            if (!date || !entryTime || !exitTime) {
+                alert('Por favor, verifique o formato da entrada.');
+                return;
             }
 
-            function toggleDarkMode() {
-                const body = document.body;
-                if (body.classList.contains("dark-mode")) {
-                    body.classList.remove("dark-mode");
-                } else {
-                    body.classList.add("dark-mode");
-                }
+            let [entryHours, entryMinutes] = entryTime.split(':').map(Number);
+            let [exitHours, exitMinutes] = exitTime.split(':').map(Number);
+
+            let entryDateTime = new Date(...parseDate(date), entryHours, entryMinutes);
+            let exitDateTime = new Date(...parseDate(date), exitHours, exitMinutes);
+            if (exitDateTime <= entryDateTime) exitDateTime.setDate(exitDateTime.getDate() + 1);
+
+            let timeDifference = (exitDateTime - entryDateTime) / 60000;
+            totalHoursWorked += Math.floor(timeDifference / 60);
+            totalMinutesWorked += Math.floor(timeDifference % 60);
+            adjustMinutes();
+
+            entriesList.push(`${formatDate(date)} - ${Math.floor(timeDifference / 60)} horas e ${Math.floor(timeDifference % 60)} minutos`);
+            daysTracked.add(formatDate(date));
+
+            updateResult();
+        }
+
+        function addExtraTime() {
+            let extraHours = parseInt(document.getElementById('extraHours').value) || 0;
+            let extraMinutes = parseInt(document.getElementById('extraMinutes').value) || 0;
+
+            totalHoursWorked += extraHours;
+            totalMinutesWorked += extraMinutes;
+            adjustMinutes();
+
+            entriesList.push(`${getCurrentDate()} - ${extraHours} horas e ${extraMinutes} minutos`);
+            daysTracked.add(getCurrentDate());
+
+            updateResult();
+        }
+
+        function adjustMinutes() {
+            if (totalMinutesWorked >= 60) {
+                totalHoursWorked += Math.floor(totalMinutesWorked / 60);
+                totalMinutesWorked = totalMinutesWorked % 60;
             }
+        }
 
-            function verificarTempoDoacao() {
-                var horaDoacao = document.getElementById('hora-doacao').value;
-                var tempoDoacao = new Date();
-                var horaAtual = tempoDoacao.getHours();
-                var minutosAtual = tempoDoacao.getMinutes();
+        function getCurrentDate() {
+            let today = new Date();
+            return `${today.getDate().toString().padStart(2, '0')}/${(today.getMonth() + 1).toString().padStart(2, '0')}/${today.getFullYear().toString().slice(-2)}`;
+        }
 
-                var horaDoacaoSplit = horaDoacao.split(':');
-                var horaDoacaoInt = parseInt(horaDoacaoSplit[0]);
-                var minutosDoacaoInt = parseInt(horaDoacaoSplit[1]);
+        function formatDate(date) {
+            return date.split('/').map(n => n.padStart(2, '0')).join('/');
+        }
 
-                var tempoPassadoMinutos = (horaAtual - horaDoacaoInt) * 60 + (minutosAtual - minutosDoacaoInt);
-                var tempoPassadoHoras = Math.floor(tempoPassadoMinutos / 60);
-                var tempoPassadoMinutosRestantes = tempoPassadoMinutos % 60;
+        function parseDate(date) {
+            return date.split('/').reverse().map(Number);
+        }
 
-                if (tempoPassadoMinutos <= 120 && tempoPassadoMinutos >= 0) {
-                    var mensagem = '<b>Ainda dentro do tempo para atendimento gratuito.</b><br>';
-                    mensagem += 'Tempo passado desde a doação: ' + tempoPassadoHoras + ' horas e ' + tempoPassadoMinutosRestantes + ' minutos.';
-                    document.getElementById('tempo-resultado').innerHTML = mensagem;
-                } else {
-                    document.getElementById('tempo-resultado').innerHTML = '<b>Tempo para atendimento gratuito expirado.</b>';
-                }
-            }
-        </script>
-    </center>
+        function updateResult() {
+            let metaHours = 7;
+            let metaDays = 3;
+            let totalMinutes = (totalHoursWorked * 60) + totalMinutesWorked;
+            let metaMinutes = metaHours * 60;
+            let hoursRemaining = Math.floor((metaMinutes - totalMinutes) / 60);
+            let minutesRemaining = (metaMinutes - totalMinutes) % 60;
+            let daysRemaining = Math.max(metaDays - daysTracked.size, 0);
 
-    <center>
-        <img src="https://i.postimg.cc/nr7qgTWj/Logo-VRT-Andrea-Silva11.png" alt="">
-    </center>
+            let resultText = '```\n';
+            resultText += `ID: ${document.getElementById('employeeId').value}\n`;
+            resultText += `Nome: ${document.getElementById('employeeName').value}\n`;
+            resultText += `Função: ${document.getElementById('employeeRole').value}\n\n`;
+            resultText += `Tempo total trabalhado: ${totalHoursWorked} horas e ${totalMinutesWorked} minutos.\n`;
+            resultText += `Dias trabalhados: ${daysTracked.size}.\n`;
+            resultText += (totalMinutes >= metaMinutes ? 'A meta de 7 horas foi batida.' : `A meta de 7 horas não foi batida.\nFaltam ${hoursRemaining} horas e ${minutesRemaining} minutos.`) + `\n`;
+            resultText += (daysTracked.size >= metaDays ? 'A meta de 3 dias foi batida.' : `Faltam ${daysRemaining} dias.`) + `\n\n`;
+            resultText += 'Detalhes de Ponto:\n' + entriesList.join('\n') + '\n\nJustificativa: ' + (document.getElementById('justification').value || 'N/A') + '\n';
+            resultText += '```';
+
+            document.getElementById('resultText').innerText = resultText;
+        }
+
+        function generateFile() {
+            const content = document.getElementById('resultText').innerText;
+            const blob = new Blob([content], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${document.getElementById('employeeId').value}_${document.getElementById('employeeName').value.replace(/\s/g, '_')}.txt`;
+            link.click();
+        }
+    </script>
 </body>
 </html>
