@@ -93,9 +93,7 @@
         <div class="result" id="resultText">Nenhum resultado disponível.</div>
     </div>
 
-    <div class="right-align">
-        <b><a href="https://jackymayers.github.io/farmacia/"><font color="purple">Farmacia</font></a></b>
-    </div>
+    
 
     <script>
         let totalHoursWorked = 0;
@@ -212,32 +210,38 @@
             let resultText = '```\n';
             resultText += `ID: ${document.getElementById('employeeId').value}\n`;
             resultText += `Nome: ${document.getElementById('employeeName').value}\n`;
-            resultText += `Função: ${document.getElementById('employeeRole').value}\n`;
-            resultText += `Tempo total trabalhado: ${totalHoursWorked} horas e ${totalMinutesWorked} minutos.\n`;
-            resultText += `Dias trabalhados: ${daysTracked.size}.\n`;
-            resultText += `A meta de 7 horas ${hoursRemaining <= 0 ? 'batida.' : `não foi batida.\nFaltam ${hoursRemaining} horas e ${minutesRemaining} minutos.`}\n`;
-            resultText += `A meta de 3 dias ${daysRemaining === 0 ? 'batida.' : `não foi batida.\nFaltam ${daysRemaining} dias.`}`;
-            resultText += `\nDetalhes de Ponto:\n`;
+            resultText += `Função: ${document.getElementById('employeeRole').value}\n\n`;
+            resultText += `Total de horas trabalhadas: ${totalHoursWorked} horas e ${totalMinutesWorked} minutos\n`;
+            resultText += `Dias trabalhados: ${daysTracked.size}\n\n`;
+
+            if (totalMinutesWorked >= metaMinutes && daysTracked.size >= metaDays) {
+                resultText += `Meta de ${metaHours} horas e ${metaDays} dias foi batida!\n\n`;
+            } else {
+                resultText += `Faltam ${hoursRemaining} horas e ${minutesRemaining} minutos para a meta de ${metaHours} horas.\n`;
+                resultText += `Faltam ${daysRemaining} dias para a meta de ${metaDays} dias.\n\n`;
+            }
+
+            resultText += `Detalhes de Ponto:\n`;
             entriesList.forEach(entry => {
                 resultText += `${entry}\n`;
             });
 
-            let justification = document.getElementById('justification').value;
-            if (justification) {
-                resultText += `\nJustificativa: ${justification}`;
+            if (document.getElementById('justification').value.trim()) {
+                resultText += `Justificativa: ${document.getElementById('justification').value}\n`;
             }
 
             resultText += '```';
-            document.getElementById('resultText').textContent = resultText;
+            document.getElementById('resultText').innerText = resultText;
         }
 
         function generateFile() {
-            let data = document.getElementById('resultText').textContent;
-            let filename = `${document.getElementById('employeeId').value}_${document.getElementById('employeeName').value.replace(' ', '_')}.txt`;
-            let file = new Blob([data], { type: 'text/plain' });
+            let fileName = `${document.getElementById('employeeId').value}_${document.getElementById('employeeName').value.replace(/\s+/g, '_')}.txt`;
+            let content = document.getElementById('resultText').innerText;
+
+            let blob = new Blob([content], { type: 'text/plain' });
             let link = document.createElement('a');
-            link.href = URL.createObjectURL(file);
-            link.download = filename;
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
             link.click();
         }
     </script>
