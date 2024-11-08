@@ -45,12 +45,22 @@
             border-radius: 4px;
             font-family: monospace;
         }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .right-align {
+            text-align: right;
+        }
     </style>
 </head>
 <body>
-    <center>
-        <b><a href="https://jackymayers.github.io/farmacia/"><font color="purple">Farmacia</font></a></b>
-    </center>
+    <div class="header">
+        <center>
+            <b><a href="https://jackymayers.github.io/farmacia/"><font color="purple">Farmacia</font></a></b>
+        </center>
+    </div>
+    
     <div class="container">
         <h1>Controle de ponto H.M.A.S</h1>
         <form id="timeForm">
@@ -78,9 +88,13 @@
             <button type="button" onclick="updateResult()">Justificar</button>
             <button type="button" onclick="generateFile()">Gerar Arquivo TXT</button>
         </form>
+        
         <h2>Resultado</h2>
-
         <div class="result" id="resultText">Nenhum resultado disponível.</div>
+    </div>
+
+    <div class="right-align">
+        <b><a href="https://jackymayers.github.io/farmacia/"><font color="purple">Farmacia</font></a></b>
     </div>
 
     <script>
@@ -198,27 +212,36 @@
             let resultText = '```\n';
             resultText += `ID: ${document.getElementById('employeeId').value}\n`;
             resultText += `Nome: ${document.getElementById('employeeName').value}\n`;
-            resultText += `Função: ${document.getElementById('employeeRole').value}\n\n`;
+            resultText += `Função: ${document.getElementById('employeeRole').value}\n`;
             resultText += `Tempo total trabalhado: ${totalHoursWorked} horas e ${totalMinutesWorked} minutos.\n`;
             resultText += `Dias trabalhados: ${daysTracked.size}.\n`;
-            resultText += (totalMinutes >= metaMinutes ? 'A meta de 7 horas foi batida.' : `A meta de 7 horas não foi batida.\nFaltam ${hoursRemaining} horas e ${minutesRemaining} minutos.`) + `\n`;
-            resultText += (daysTracked.size >= metaDays ? 'A meta de 3 dias foi batida.' : `Faltam ${daysRemaining} dias.`) + `\n\n`;
-            resultText += 'Detalhes de Ponto:\n' + entriesList.join('\n') + '\n\nJustificativa: ' + (document.getElementById('justification').value || 'N/A') + '\n';
-            resultText += '```';
+            resultText += `A meta de 7 horas ${hoursRemaining <= 0 ? 'batida.' : `não foi batida.\nFaltam ${hoursRemaining} horas e ${minutesRemaining} minutos.`}\n`;
+            resultText += `A meta de 3 dias ${daysRemaining === 0 ? 'batida.' : `não foi batida.\nFaltam ${daysRemaining} dias.`}`;
+            resultText += `\nDetalhes de Ponto:\n`;
+            entriesList.forEach(entry => {
+                resultText += `${entry}\n`;
+            });
 
-            document.getElementById('resultText').innerText = resultText;
+            let justification = document.getElementById('justification').value;
+            if (justification) {
+                resultText += `\nJustificativa: ${justification}`;
+            }
+
+            resultText += '```';
+            document.getElementById('resultText').textContent = resultText;
         }
 
         function generateFile() {
-            const content = document.getElementById('resultText').innerText;
-            const blob = new Blob([content], { type: 'text/plain' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `${document.getElementById('employeeId').value}_${document.getElementById('employeeName').value.replace(/\s/g, '_')}.txt`;
+            let data = document.getElementById('resultText').textContent;
+            let filename = `${document.getElementById('employeeId').value}_${document.getElementById('employeeName').value.replace(' ', '_')}.txt`;
+            let file = new Blob([data], { type: 'text/plain' });
+            let link = document.createElement('a');
+            link.href = URL.createObjectURL(file);
+            link.download = filename;
             link.click();
         }
     </script>
-    <center>
+	<center>
         <img src="https://i.postimg.cc/nr7qgTWj/Logo-VRT-Andrea-Silva11.png" alt="">
     </center>
     <br/>
