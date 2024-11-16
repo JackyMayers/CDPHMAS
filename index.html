@@ -93,8 +93,6 @@
         <div class="result" id="resultText">Nenhum resultado disponível.</div>
     </div>
 
-    
-
     <script>
         let totalHoursWorked = 0;
         let totalMinutesWorked = 0;
@@ -214,10 +212,10 @@
             resultText += `Total de horas trabalhadas: ${totalHoursWorked} horas e ${totalMinutesWorked} minutos\n`;
             resultText += `Dias trabalhados: ${daysTracked.size}\n\n`;
 
-            if (totalMinutesWorked >= metaMinutes && daysTracked.size >= metaDays) {
+            if (totalMinutes >= metaMinutes && daysTracked.size >= metaDays) {
                 resultText += `Meta de ${metaHours} horas e ${metaDays} dias foi batida!\n\n`;
             } else {
-                resultText += `Faltam ${hoursRemaining} horas e ${minutesRemaining} minutos para a meta de ${metaHours} horas.\n`;
+                resultText += `Faltam ${Math.max(0, hoursRemaining)} horas e ${Math.max(0, minutesRemaining)} minutos para a meta de ${metaHours} horas.\n`;
                 resultText += `Faltam ${daysRemaining} dias para a meta de ${metaDays} dias.\n\n`;
             }
 
@@ -227,28 +225,31 @@
             });
 
             if (document.getElementById('justification').value.trim()) {
-                resultText += `Justificativa: ${document.getElementById('justification').value}\n`;
+                resultText += `\nJustificativa: ${document.getElementById('justification').value.trim()}\n`;
             }
 
-            resultText += '```';
+            resultText += '\n```';
             document.getElementById('resultText').innerText = resultText;
         }
 
         function generateFile() {
-            let fileName = `${document.getElementById('employeeId').value}_${document.getElementById('employeeName').value.replace(/\s+/g, '_')}.txt`;
-            let content = document.getElementById('resultText').innerText;
+            let employeeId = document.getElementById('employeeId').value.trim();
+            let employeeName = document.getElementById('employeeName').value.trim();
+            if (!employeeId || !employeeName) {
+                alert('Por favor, insira o ID e o nome do funcionário.');
+                return;
+            }
+            let fileName = `${employeeId}_${employeeName}.txt`;
+            let fileContent = document.getElementById('resultText').innerText;
+            let blob = new Blob([fileContent], { type: 'text/plain' });
+            let url = URL.createObjectURL(blob);
 
-            let blob = new Blob([content], { type: 'text/plain' });
-            let link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = fileName;
-            link.click();
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            a.click();
+            URL.revokeObjectURL(url);
         }
     </script>
-	<center>
-        <img src="https://i.postimg.cc/nr7qgTWj/Logo-VRT-Andrea-Silva11.png" alt="">
-    </center>
-    <br/>
-    <p style="text-align: center; font-weight: bold;">Direitos Reservados © 2024 <a href="https://jackymayers.github.io/" target="_blank" style="font-weight: bold;">Jacky Mayers</a>.</p>
 </body>
 </html>
